@@ -1,0 +1,23 @@
+= performance analysis
+:toc:
+:toc-placement: preamble
+:toclevels: 3
+
+This repository consists of examples to analyse the performance of your web applications using the gatling gradle plugin.
+
+== Quick start
+
+[source, bash]
+----
+# Start quarkus application
+./gradlew qDev
+
+# Run gatling performance test
+./gradlew gRun
+----
+
+Then click on the link at the end of the output of the gatlingRun task and enjoy the beautiful html report.
+
+== Tutorial
+
+You can find a dedicated tutorial about this on my website: https://simonscholz.github.io/tutorials/gatling-performance-testing
