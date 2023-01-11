@@ -4,12 +4,12 @@ package io.github.simonscholz.simulation
 import io.gatling.javaapi.core.CoreDsl
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.http.HttpDsl.http
-import io.github.simonscholz.scenario.HelloScenario.users
+import io.github.simonscholz.scenario.HelloScenario.hello
 /* ktlint-disable no-wildcard-imports */
 
 class HelloSimulation : Simulation() {
 
-    val httpProtocol =
+    private val httpProtocol =
         http.baseUrl("http://localhost:8080")
             .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
             .acceptLanguageHeader("en-US,en;q=0.5")
@@ -20,7 +20,7 @@ class HelloSimulation : Simulation() {
 
     init {
         setUp(
-            users.injectOpen(CoreDsl.rampUsers(10).during(10)),
+            hello.injectOpen(CoreDsl.rampUsers(50000).during(30)),
         ).protocols(httpProtocol)
     }
 }
