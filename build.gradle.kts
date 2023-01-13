@@ -26,6 +26,8 @@ dependencies {
     implementation("io.quarkus:quarkus-arc")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
+
+    gatlingImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1")
 }
 
 group = "io.github.simonscholz"
