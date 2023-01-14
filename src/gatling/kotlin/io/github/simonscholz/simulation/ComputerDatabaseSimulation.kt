@@ -5,6 +5,10 @@ import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.http.HttpDsl.http
 
 class ComputerDatabaseSimulation : Simulation() {
+    val AT_ONCE_USERS: Int = Integer.getInteger("atOnceUsers", 10)
+    val RAMP_UP_USERS: Int = Integer.getInteger("rampUpUsers", 10)
+    val DURATION: Int = Integer.getInteger("duration", 10)
+
     private val browse =
         repeat(4, "i").on(
             exec(
@@ -25,7 +29,9 @@ class ComputerDatabaseSimulation : Simulation() {
 
     init {
         setUp(
-            users.injectOpen(rampUsers(10).during(10)),
+            users.injectOpen(
+                atOnceUsers(AT_ONCE_USERS),
+                rampUsers(RAMP_UP_USERS).during(DURATION.toLong())),
         ).protocols(httpProtocol)
     }
 }
