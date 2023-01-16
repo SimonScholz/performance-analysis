@@ -1,0 +1,36 @@
+---
+version: "3.7"
+
+services:
+  prometheus:
+    image: bitnami/prometheus:2.41.0
+    container_name: quarkus-prometheus
+    restart: "no"
+    ports:
+      - '9090:9090'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./dev-environment/docker-config/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      # Enable to refresh the configuration using the reload endpoint http://localhost:9090/-/reload
+      - '--web.enable-lifecycle'
+      # We need to pass all the other command flags as well
+      # See: https://github.com/prometheus/prometheus/blob/b4317768b9476ee09a770c5dac6d826a8e7000f2/Dockerfile#L23-L26
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries --web.console.templates=/usr/share/prometheus/consoles'
+  grafana:
+    image: grafana/grafana:9.3.2
+    container_name: quarkus-grafana
+    restart: "no"
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./dev-environment/docker-config/grafana:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  prometheus-data:
+  grafana-data:

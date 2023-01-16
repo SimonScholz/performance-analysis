@@ -15,7 +15,7 @@ import java.time.Duration
  * Renamed to skip this simulation for now,
  * because the simulation closure with includes does not work atm.
  */
-class HelloSimulaXtion : Simulation() {
+class HelloSimulation : Simulation() {
 
     init {
         val users = 10

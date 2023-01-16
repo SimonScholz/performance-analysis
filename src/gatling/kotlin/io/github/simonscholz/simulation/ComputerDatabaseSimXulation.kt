@@ -4,10 +4,10 @@ import io.gatling.javaapi.core.CoreDsl.* // ktlint-disable no-wildcard-imports
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.http.HttpDsl.http
 
-class ComputerDatabaseSimulation : Simulation() {
-    val AT_ONCE_USERS: Int = Integer.getInteger("atOnceUsers", 10)
-    val RAMP_UP_USERS: Int = Integer.getInteger("rampUpUsers", 10)
-    val DURATION: Int = Integer.getInteger("duration", 10)
+class ComputerDatabaseSimXulation : Simulation() {
+    private val AT_ONCE_USERS: Int = Integer.getInteger("atOnceUsers", 10)
+    private val RAMP_UP_USERS: Int = Integer.getInteger("rampUpUsers", 10)
+    private val DURATION: Int = Integer.getInteger("duration", 10)
 
     private val browse =
         repeat(4, "i").on(
@@ -31,7 +31,8 @@ class ComputerDatabaseSimulation : Simulation() {
         setUp(
             users.injectOpen(
                 atOnceUsers(AT_ONCE_USERS),
-                rampUsers(RAMP_UP_USERS).during(DURATION.toLong())),
+                rampUsers(RAMP_UP_USERS).during(DURATION.toLong()),
+            ),
         ).protocols(httpProtocol)
     }
 }
