@@ -5,6 +5,7 @@ import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.core.Simulation
 import io.github.simonscholz.config.Config.HTTP_PROTOCOL
 import io.github.simonscholz.scenario.CSVFeederProductAvailabilityScenario.productAvailabilityScenario
+import io.github.simonscholz.scenario.ChainScenario.chainScenario
 import io.github.simonscholz.scenario.CustomRestClientFeederProductAvailabilityScenario.restClientProductAvailabilityScenario
 import io.github.simonscholz.scenario.HelloScenario.hello
 import java.time.Duration
@@ -34,6 +35,12 @@ class HelloSimulation : Simulation() {
                 rampUsersPerSec(20.0).to(50.0).during(20),
             ),
             restClientProductAvailabilityScenario.injectOpen(
+                nothingFor(Duration.ofSeconds(2)),
+                atOnceUsers(50),
+                rampUsers(users).during(duration),
+                rampUsersPerSec(20.0).to(50.0).during(20),
+            ),
+            chainScenario.injectOpen(
                 nothingFor(Duration.ofSeconds(2)),
                 atOnceUsers(50),
                 rampUsers(users).during(duration),
