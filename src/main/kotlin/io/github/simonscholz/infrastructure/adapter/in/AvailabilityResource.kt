@@ -1,4 +1,4 @@
-package io.github.simonscholz
+package io.github.simonscholz.infrastructure.adapter.`in`
 
 import java.util.concurrent.TimeUnit
 import javax.ws.rs.GET

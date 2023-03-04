@@ -1,4 +1,4 @@
-package io.github.simonscholz.config
+package io.github.simonscholz.infrastructure.config
 
 import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.Tag

@@ -1,4 +1,4 @@
-package io.github.simonscholz
+package io.github.simonscholz.infrastructure.adapter.`in`
 
 import javax.ws.rs.GET
 import javax.ws.rs.Path

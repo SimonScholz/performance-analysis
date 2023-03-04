@@ -21,6 +21,7 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries --web.console.templates=/usr/share/prometheus/consoles'
+
   grafana:
     image: grafana/grafana:9.3.2
     container_name: quarkus-grafana
@@ -31,6 +32,23 @@ services:
       - ./dev-environment/docker-config/grafana:/etc/grafana/provisioning/datasources
       - grafana-data:/var/lib/grafana
 
+  activemq:
+    image: symptoma/activemq:5.17.3
+    container_name: availability-activemq
+    ports:
+      - '8161:8161'
+      - '61616:61616'
+      - '5672:5672'
+    volumes:
+      - activemq-volume:/opt/activemq/data
+    environment:
+      ACTIVEMQ_DISALLOW_WEBCONSOLE: false
+      ACTIVEMQ_USERNAME: admin
+      ACTIVEMQ_PASSWORD: admin
+      ACTIVEMQ_WEBADMIN_USERNAME: admin
+      ACTIVEMQ_WEBADMIN_PASSWORD: admin
+
 volumes:
   prometheus-data:
   grafana-data:
+  activemq-volume:

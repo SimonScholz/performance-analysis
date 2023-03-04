@@ -26,6 +26,12 @@ dependencies {
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-micrometer-registry-prometheus")
 
+    // Messaging
+    implementation("io.quarkus:quarkus-smallrye-reactive-messaging")
+
+    // JMS
+    implementation("io.quarkus:quarkus-smallrye-reactive-messaging-amqp")
+
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 
@@ -58,4 +64,29 @@ gatling {
     // WARNING: options below only work when logback config file isn't provided
     logLevel = "WARN" // logback root level
     logHttp = io.gatling.gradle.LogHttp.NONE // set to 'ALL' for all HTTP traffic in TRACE, 'FAILURES' for failed HTTP traffic in DEBUG
+}
+
+configurations {
+    create("gatlingDependencies").apply {
+        extendsFrom(configurations.gatling.get())
+    }
+}
+
+tasks.register("gatlingJar", Jar::class) {
+    group = "build"
+    archiveBaseName.set("gatling-performance-analysis")
+    dependsOn("gatlingClasses", "processResources")
+
+    manifest {
+        attributes["Implementation-Title"] = "Gradle Jar File Example"
+        attributes["Implementation-Version"] = archiveVersion
+        attributes["Main-Class"] = "io.gatling.app.Gatling"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(sourceSets.main.get().output.classesDirs)
+    from(sourceSets.gatling.get().output)
+    from(configurations.named("gatlingDependencies").get().map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
 }
