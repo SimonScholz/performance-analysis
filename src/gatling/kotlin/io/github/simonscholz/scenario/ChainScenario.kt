@@ -23,5 +23,5 @@ object ChainScenario {
                     ),
             )
 
-    val chainScenario = scenario("Hello").exec(chain)
+    val chainScenario = scenario("ChainScenario").exec(chain)
 }
