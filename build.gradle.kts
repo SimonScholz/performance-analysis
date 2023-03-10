@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.allopen")
     id("io.quarkus")
 
-    id("io.gatling.gradle") version "3.9.0.2"
+    id("io.gatling.gradle") version "3.9.2.1"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("com.github.ben-manes.versions") version "0.44.0"
 }
@@ -85,8 +85,13 @@ tasks.register("gatlingJar", Jar::class) {
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    from(sourceSets.main.get().output.classesDirs)
     from(sourceSets.gatling.get().output)
-    from(configurations.named("gatlingDependencies").get().map { if (it.isDirectory) it else zipTree(it) })
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    from(configurations.named("gatlingDependencies").get().map { if (it.isDirectory) it else zipTree(it) }) {
+        exclude("META-INF/MANIFEST.MF")
+        exclude("META-INF/*.SF")
+        exclude("META-INF/*.DSA")
+        exclude("META-INF/*.RSA")
+    }
     with(tasks.jar.get() as CopySpec)
 }
