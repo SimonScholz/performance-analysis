@@ -6,11 +6,19 @@ plugins {
     id("io.gatling.gradle") version "3.9.2.1"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("com.github.ben-manes.versions") version "0.44.0"
+    id("com.google.cloud.tools.jib") version "3.3.1"
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
+}
+
+val gatlingJibDocker: Configuration by configurations.creating {
+    extendsFrom(
+        configurations.kotlinCompilerPluginClasspathGatling.get(),
+        configurations.gatling.get(),
+    )
 }
 
 val quarkusPlatformGroupId: String by project
@@ -66,12 +74,6 @@ gatling {
     logHttp = io.gatling.gradle.LogHttp.NONE // set to 'ALL' for all HTTP traffic in TRACE, 'FAILURES' for failed HTTP traffic in DEBUG
 }
 
-configurations {
-    create("gatlingDependencies").apply {
-        extendsFrom(configurations.gatling.get())
-    }
-}
-
 tasks.register("gatlingJar", Jar::class) {
     group = "build"
     archiveBaseName.set("gatling-performance-analysis")
@@ -86,12 +88,36 @@ tasks.register("gatlingJar", Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from(sourceSets.gatling.get().output)
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    from(configurations.named("gatlingDependencies").get().map { if (it.isDirectory) it else zipTree(it) }) {
+    from(configurations.kotlinCompilerPluginClasspathGatling.get().map { if (it.isDirectory) it else zipTree(it) })
+    from(configurations.gatling.get().map { if (it.isDirectory) it else zipTree(it) }) {
         exclude("META-INF/MANIFEST.MF")
         exclude("META-INF/*.SF")
         exclude("META-INF/*.DSA")
         exclude("META-INF/*.RSA")
     }
     with(tasks.jar.get() as CopySpec)
+}
+
+// Copy over the gatling classes to the app/classes folder
+tasks.register("appDir", Copy::class) {
+    dependsOn("gatlingClasses")
+    from("build/classes/kotlin/gatling")
+    into("build/extra-directory/app/classes/")
+}
+
+tasks.named("jib") {
+    dependsOn("appDir")
+}
+
+tasks.named("jibDockerBuild") {
+    dependsOn("appDir")
+}
+
+jib {
+    configurationName.set("gatlingJibDocker")
+    extraDirectories.setPaths("build/extra-directory")
+    container {
+        mainClass = "io.gatling.app.Gatling"
+        args = listOf("-s", "io.github.simonscholz.simulation.HelloSimulation")
+    }
 }
