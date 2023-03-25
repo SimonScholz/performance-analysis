@@ -3,7 +3,8 @@ package io.github.simonscholz.config
 import io.gatling.javaapi.http.HttpDsl.http
 
 object Config {
-    val BASE_URL: String = System.getenv("gatlingBaseUrl") ?: "http://localhost:8080"
+    val BASE_URL: String = System.getenv("gatlingBaseUrl")
+        ?: System.getProperty("gatlingBaseUrl", "http://localhost:8080")
 
     val HTTP_PROTOCOL =
         http.baseUrl(BASE_URL)
