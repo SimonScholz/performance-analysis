@@ -105,12 +105,22 @@ tasks.register("appDir", Copy::class) {
     into("build/extra-directory/app/classes/")
 }
 
+// Copy over the gatling resources folder
+tasks.register("copyGatlingResources", Copy::class) {
+    from("src/gatling/resources")
+    into("build/extra-directory/app/resources")
+}
+
 tasks.named("jib") {
-    dependsOn("appDir")
+    dependsOn("appDir", "copyGatlingResources")
 }
 
 tasks.named("jibDockerBuild") {
-    dependsOn("appDir")
+    dependsOn("appDir", "copyGatlingResources")
+}
+
+tasks.named("jibBuildTar") {
+    dependsOn("appDir", "copyGatlingResources")
 }
 
 jib {
