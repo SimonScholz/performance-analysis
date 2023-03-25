@@ -14,13 +14,6 @@ repositories {
     mavenLocal()
 }
 
-val gatlingJibDocker: Configuration by configurations.creating {
-    extendsFrom(
-        configurations.kotlinCompilerPluginClasspathGatling.get(),
-        configurations.gatling.get(),
-    )
-}
-
 val quarkusPlatformGroupId: String by project
 val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
@@ -99,7 +92,7 @@ tasks.register("gatlingJar", Jar::class) {
 }
 
 // Copy over the gatling classes to the app/classes folder
-tasks.register("appDir", Copy::class) {
+tasks.register("copyGatlingToAppDir", Copy::class) {
     dependsOn("gatlingClasses")
     from("build/classes/kotlin/gatling")
     into("build/extra-directory/app/classes/")
@@ -112,15 +105,23 @@ tasks.register("copyGatlingResources", Copy::class) {
 }
 
 tasks.named("jib") {
-    dependsOn("appDir", "copyGatlingResources")
+    dependsOn("copyGatlingToAppDir", "copyGatlingResources")
 }
 
 tasks.named("jibDockerBuild") {
-    dependsOn("appDir", "copyGatlingResources")
+    dependsOn("copyGatlingToAppDir", "copyGatlingResources")
 }
 
 tasks.named("jibBuildTar") {
     dependsOn("appDir", "copyGatlingResources")
+}
+
+// Configuration, which should be used by Jib
+val gatlingJibDocker: Configuration by configurations.creating {
+    extendsFrom(
+        configurations.kotlinCompilerPluginClasspathGatling.get(),
+        configurations.gatling.get(),
+    )
 }
 
 jib {
